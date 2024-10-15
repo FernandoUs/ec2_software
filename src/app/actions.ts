@@ -1,20 +1,19 @@
-// src/app/actions.ts
 'use server'
 
 import { findCity } from '../utils/csvLoader';
 
 export async function calculateDistance(city1: string, city2: string) {
-  const city1Data = findCity(city1);
-  const city2Data = findCity(city2);
+  const city1Data = await findCity(city1);
+  const city2Data = await findCity(city2);
 
   if (!city1Data || !city2Data) {
     throw new Error('One or both cities not found in the CSV file');
   }
 
-  const lat1 = parseFloat(city1Data.lat);
-  const lon1 = parseFloat(city1Data.lng);
-  const lat2 = parseFloat(city2Data.lat);
-  const lon2 = parseFloat(city2Data.lng);
+  const lat1 = parseFloat(city1Data?.lat ?? '0');
+  const lon1 = parseFloat(city1Data?.lng ?? '0');
+  const lat2 = parseFloat(city2Data?.lat ?? '0');
+  const lon2 = parseFloat(city2Data?.lng ?? '0');
 
   return calculateHaversineDistance(lat1, lon1, lat2, lon2);
 }

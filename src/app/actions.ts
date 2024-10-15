@@ -1,30 +1,14 @@
 // src/app/actions.ts
 'use server'
 
-import fs from 'fs';
-import path from 'path';
-import { parse } from 'csv-parse/sync';
+import { findCity } from '../utils/csvLoader';
 
 export async function calculateDistance(city1: string, city2: string) {
-  const csvFilePath = path.join(process.cwd(), 'public', 'worldcities.csv');
-  const fileContent = fs.readFileSync(csvFilePath, 'utf-8');
-  const records = parse(fileContent, {
-    columns: true,
-    skip_empty_lines: true
-  });
-
-  const findCity = (cityName: string) => {
-    return records.find((record: any) =>
-      record.city.toLowerCase() === cityName.toLowerCase() ||
-      record.city_ascii.toLowerCase() === cityName.toLowerCase()
-    );
-  };
-
   const city1Data = findCity(city1);
   const city2Data = findCity(city2);
 
   if (!city1Data || !city2Data) {
-    throw new Error('City not found');
+    throw new Error('One or both cities not found in the CSV file');
   }
 
   const lat1 = parseFloat(city1Data.lat);
